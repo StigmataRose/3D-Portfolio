@@ -234,16 +234,27 @@ const environmentMap = cubeTextureLoader.load([
 scene.environment = environmentMap;
 
 
+import meImg from '../assets/images/me.png';
+import educationImg from '../assets/images/education.jpg';
+import projectImg from '../assets/images/project.jpg';
+import catImg from '../assets/images/cat.png';
+import guitarImg from '../assets/images/guitar.jpg';
+import orthoImg from '../assets/images/ortho.jpg';
+import lynkUpImg from '../assets/images/lynk-up.jpg';
+import goatImg from '../assets/images/goat.gif';
+
 // --- Image URLs ---
 const imageUrls = [
-    '/images/me.png', // Placeholder, not used
-    '/images/education.jpg',
-    '/images/project.jpg',
-    '/images/cat.png',
-    '/images/guitar.jpg',
-    '/images/ortho.jpg',
-    '/images/lynk-up.jpg',
-    '/images/goat.gif',
+    meImg,          // Use the imported variable
+    educationImg,   // Use the imported variable
+    projectImg,     // Use the imported variable
+    catImg,         // Use the imported variable
+    guitarImg,      // Use the imported variable
+    orthoImg,       // Use the imported variable
+    lynkUpImg,      // Use the imported variable
+    goatImg,        // Use the imported variable
+  
+    // Keep the full URLs as strings
     'https://placehold.co/800x800/967E76/333?text=One+Buck+Compressor',
     'https://placehold.co/800x800/C2B2B2/333?text=X+Synthesizer',
     'https://placehold.co/800x800/B2C8DF/333?text=Drip+VST',
