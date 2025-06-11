@@ -1,5 +1,12 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.129.0';
-
+import meImg from './assets/images/me.png';
+import educationImg from './assets/images/education.jpg';
+import projectImg from './assets/images/project.jpg';
+import catImg from './assets/images/cat.png';
+import guitarImg from './assets/images/guitar.jpg';
+import orthoImg from './assets/images/ortho.jpg';
+import lynkUpImg from './assets/images/lynk-up.jpg';
+import goatImg from './assets/images/goat.gif';
 // Main Scene (for the cubes)
 const scene = new THREE.Scene();
 
@@ -217,7 +224,6 @@ directionalLight.position.set(10, 10, 10);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
-
 // --- Texture Loader ---
 const textureLoader = new THREE.TextureLoader();
 
@@ -234,14 +240,6 @@ const environmentMap = cubeTextureLoader.load([
 scene.environment = environmentMap;
 
 
-import meImg from '../assets/images/me.png';
-import educationImg from '../assets/images/education.jpg';
-import projectImg from '../assets/images/project.jpg';
-import catImg from '../assets/images/cat.png';
-import guitarImg from '../assets/images/guitar.jpg';
-import orthoImg from '../assets/images/ortho.jpg';
-import lynkUpImg from '../assets/images/lynk-up.jpg';
-import goatImg from '../assets/images/goat.gif';
 
 // --- Image URLs ---
 const imageUrls = [
