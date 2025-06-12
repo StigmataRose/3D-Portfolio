@@ -172,10 +172,10 @@
                     </div>
                     <div class="card">
                         <h3 class="text-2xl font-semibold text-cyan-400">Professional Certifications</h3>
-                         <ul class="mt-4 space-y-2 text-lg">
-                            <li><strong class="text-white">CISSP:</strong> 2024</li>
-                            <li><strong class="text-white">CCSK:</strong> 2024</li>
-                            <li><strong class="text-white">SURE Grant Researcher (Binaural Audio)</strong></li>
+                        <ul class="mt-4 space-y-2 text-lg">
+                            <li><strong class="text-white">CISSP:</strong> Certified Information Systems Security Professional (member of ISC2)</li>
+                            <li><strong class="text-white">CCSK:</strong> Certificate of Cloud Security Knowledge (by CSA)</li>
+                            <li><strong class="text-white">SURE Grant Researcher</strong> (Binaural Audio Research)</li>
                         </ul>
                     </div>
                 </div>
@@ -183,18 +183,33 @@
         </section>
 
         <section class="text-center">
-             <div class="content-fade-in max-w-3xl mx-auto">
+            <div class="content-fade-in max-w-3xl mx-auto">
                 <h2 class="text-5xl font-bold text-white">Professional Projects</h2>
-                <p class="mt-4 text-xl text-gray-400">A collection of my work in software development, audio technology, cloud infrastructure, and security from concept to launch.</p>
+                <p class="mt-4 text-xl text-gray-400">A showcase of my software development journey.</p>
+                <p class="mt-6 text-base text-gray-500">Powered by:</p>
+                <div class="mt-2 flex justify-center items-center space-x-6">
+                    <div class="flex flex-col items-center">
+                        <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js Logo" class="h-8 w-auto">
+                        <span class="mt-1 text-xs text-gray-500">Node.js</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://vitejs.dev/logo.svg" alt="Vite Logo" class="h-10 w-10">
+                        <span class="mt-1 text-xs text-gray-500">Vite</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="Tailwind CSS Logo" class="h-8 w-auto">
+                        <span class="mt-1 text-xs text-gray-500">Tailwind CSS</span>
+                    </div>
+                </div>
             </div>
         </section>
         
         <section class="project-section content-fade-in">
             <div class="max-w-7xl mx-auto w-full">
                 <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">2024-2025</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Border Protection Portal</h2>
-                    <p class="mt-4 text-xl text-gray-400">Lead Full-Stack &amp; Security Engineer</p>
+                    <p class="text-lg font-medium text-cyan-400">Caterpillar Inc,</p>
+                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Network Portal & Automation</h2>
+                    <p class="mt-4 text-xl text-gray-400">Cyber Security Analyst</p>
                     <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
@@ -207,9 +222,9 @@
         <section class="project-section content-fade-in">
             <div class="max-w-7xl mx-auto w-full">
                 <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">2024</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Top Shelf Herbs of Alaska</h2>
-                    <p class="mt-4 text-xl text-gray-400">Web Developer &amp; Digital Marketing Strategist</p>
+                    <p class="text-lg font-medium text-cyan-400">Neck Illusions</p>
+                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">A.I. Specialist</h2>
+                    <p class="mt-4 text-xl text-gray-400">Full-Stack &amp; Digital Marketing Strategist</p>
                     <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
@@ -291,18 +306,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButtons = document.querySelectorAll('.toggle-section-btn');
-
+        
             toggleButtons.forEach(button => {
-                // Fix: Use .closest('section') to work for the Education section and all project sections
                 const section = button.closest('section');
-                if (!section) return; // Failsafe in case a button is not in a section
-
+                if (!section) return;
+        
                 const cards = section.querySelectorAll('.card');
-                // Note: headerElements will be an empty list for the Education section, which is handled correctly.
-                const headerElements = section.querySelectorAll('.project-header > *');
-
-                // --- 1. INITIAL STATE SETUP: HIDE EVERYTHING ON LOAD ---
-
+                // No longer need to select header elements for hiding/showing
+                // The project-header content (titles, descriptions) will remain visible by default.
+        
+                // --- 1. INITIAL STATE SETUP: HIDE CARDS ON LOAD ---
+        
                 // Hide cards instantly without an animation
                 cards.forEach(card => {
                     card.style.transition = 'none'; // Temporarily disable transitions
@@ -313,39 +327,23 @@
                     const rotation = (Math.random() - 0.5) * 60;
                     card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
                 });
-
-                // Hide header elements instantly
-                headerElements.forEach(el => {
-                    if (!el.matches('button')) { // Don't hide the button itself
-                         el.style.transition = 'none';
-                         el.style.opacity = '0';
-                    }
-                });
-                
+        
                 // Set the initial state and button text
                 button.textContent = 'Show Details';
-                section.dataset.visible = 'false';
-
+                section.dataset.visible = 'false'; // Keep this data attribute to track visibility
+        
                 // Re-enable transitions after a very short delay.
-                // This ensures the initial state is set before any animations can occur.
                 setTimeout(() => {
                     cards.forEach(card => card.style.transition = ''); // Resets to use the transition from your CSS file
-                    headerElements.forEach(el => el.style.transition = '');
                 }, 50);
-
-
+        
+        
                 // --- 2. CLICK EVENT LISTENER TO TOGGLE VISIBILITY ---
                 button.addEventListener('click', () => {
                     const isVisible = section.dataset.visible === 'true';
-
+        
                     if (isVisible) {
-                        // --- ANIMATE OUT (HIDE) ---
-                        headerElements.forEach(el => {
-                            if (!el.matches('button')) {
-                                el.style.opacity = '0';
-                            }
-                        });
-
+                        // --- ANIMATE OUT (HIDE) CARDS ---
                         cards.forEach(card => {
                             const x = (Math.random() - 0.5) * 2 * (window.innerWidth / 2);
                             const y = (Math.random() - 0.5) * 2 * (window.innerHeight / 3);
@@ -353,21 +351,17 @@
                             card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
                             card.style.opacity = '0';
                         });
-                        
+        
                         button.textContent = 'Show Details';
                         section.dataset.visible = 'false';
-
+        
                     } else {
-                        // --- ANIMATE IN (SHOW) ---
-                        headerElements.forEach(el => {
-                            el.style.opacity = '1';
-                        });
-
+                        // --- ANIMATE IN (SHOW) CARDS ---
                         cards.forEach(card => {
                             card.style.transform = 'translate(0, 0) rotate(0deg) scale(1)';
                             card.style.opacity = '1';
                         });
-
+        
                         button.textContent = 'Hide Details';
                         section.dataset.visible = 'true';
                     }
