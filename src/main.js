@@ -7,6 +7,7 @@ import guitarImg from './assets/images/guitar.jpg';
 import orthoImg from './assets/images/ortho.jpg';
 import lynkUpImg from './assets/images/lynk-up.jpg';
 import goatImg from './assets/images/goat.gif';
+import novaImg from './assets/images/nova.png';
 // Main Scene (for the cubes)
 const scene = new THREE.Scene();
 
@@ -241,7 +242,7 @@ scene.environment = environmentMap;
 
 
 
-// --- Image URLs ---
+// --- Image URLs (You can still define these, but the logic below will override for the last cube) ---
 const imageUrls = [
     meImg,          // Use the imported variable
     educationImg,   // Use the imported variable
@@ -273,6 +274,9 @@ const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
 projects.forEach((section, index) => {
     let cube;
     
+    // Check if it's the last section
+    const isLastSection = (index === projects.length - 1);
+
     if (index === 0) {
         // --- LOGIC FOR THE FIRST (GLASS) CUBE ---
         
@@ -295,6 +299,16 @@ projects.forEach((section, index) => {
         const wireframe = new THREE.LineSegments(edges, lineMaterial);
         cube.add(wireframe); // Add edges as a child of the cube
 
+    } else if (isLastSection) {
+        // --- LOGIC FOR THE LAST CUBE (novaImg, centered) ---
+        const texture = textureLoader.load(novaImg);
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+        cube = new THREE.Mesh(geometry, material);
+        cube.position.x = 3.5; // Center the cube
     } else {
         // --- ORIGINAL LOGIC FOR ALL OTHER CUBES ---
         const imageUrl = imageUrls[index] || imageUrls[imageUrls.length - 1];
@@ -305,11 +319,11 @@ projects.forEach((section, index) => {
 
         const material = new THREE.MeshStandardMaterial({ map: texture });
         cube = new THREE.Mesh(geometry, material);
+        cube.position.x = 3.5; // Maintain original position for others
     }
     
     cube.castShadow = true;
     cube.receiveShadow = true;
-    cube.position.x = 3.5;
     scene.add(cube);
     cubes.push(cube);
 });
