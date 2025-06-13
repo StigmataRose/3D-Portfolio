@@ -14,8 +14,13 @@ import xImg from "./assets/images/x.png";
 import goatImg from "./assets/images/goat.png";
 import agentsImg from "./assets/images/agents.png";
 import universityImg from "./assets/images/university.jpeg";
+import ideaImg from "./assets/images/idea.png";
 import visionImg from "./assets/images/vision.png";
 import novaImg from "./assets/images/me.png";
+import motionImg from "./assets/images/motion.png";
+import soloImg from "./assets/images/solo.png";
+import twaImg from "./assets/images/twa.png";
+import volitionImg from "./assets/images/volition.png";
 // Main Scene (for the cubes)
 const scene = new THREE.Scene();
 
@@ -223,94 +228,6 @@ const backgroundMaterial = new THREE.ShaderMaterial({
   depthWrite: false,
 });
 
-const passthroughVertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const personalFragmentShader = `
-    // --- Declarations needed to link to Three.js ---
-    uniform vec2 u_resolution;
-    uniform float u_time;
-    varying vec2 vUv;
-
-    // --- Map ShaderToy inputs to our uniforms ---
-    #define iResolution vec3(u_resolution, 1.0)
-    #define iTime u_time
-
-    // --- Original ShaderToy Code Starts Here ---
-    const float  GRID_DENSITY     = 8.0;
-    const float  LINE_THICKNESS   = 0.0;
-    const vec3   GRID_COLOR       = vec3(1.0, 1.0, 1.0);
-    const float  NOISE_SCALE      = 3.0;
-    const float  NOISE_SPEED      = 0.5;
-    const int    FBM_OCTAVES      = 5;
-    const vec3   WAVE_COLOR_DARK  = vec3(0.01, 0.1, 0.3);
-    const vec3   WAVE_COLOR_LIGHT = vec3(0.2, 0.8, 1.0);
-    
-    float random(vec2 st) {
-        return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
-    }
-
-    float value_noise(vec2 st) {
-        vec2 i = floor(st);
-        vec2 f = fract(st);
-        float a = random(i);
-        float b = random(i + vec2(1.0, 0.0));
-        float c = random(i + vec2(0.0, 1.0));
-        float d = random(i + vec2(1.0, 1.0));
-        vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
-        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-    }
-
-    float fbm(vec2 st) {
-        float value = 0.0;
-        float amplitude = 0.5;
-        for (int i = 0; i < FBM_OCTAVES; i++) {
-            value += amplitude * value_noise(st);
-            st *= 2.0;
-            amplitude *= 0.5;
-        }
-        return value;
-    }
-
-    void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-        vec2 noise_uv = fragCoord.xy / iResolution.xy;
-        noise_uv.x *= iResolution.x / iResolution.y;
-        noise_uv *= NOISE_SCALE;
-        noise_uv.x += iTime * NOISE_SPEED;
-        float noise = fbm(noise_uv);
-        vec3 background_color = mix(WAVE_COLOR_DARK, WAVE_COLOR_LIGHT, noise);
-        
-        vec2 grid_uv = fragCoord.xy / iResolution.xy;
-        grid_uv *= GRID_DENSITY;
-        vec2 cell_uv = fract(grid_uv);
-        float line_x = step(LINE_THICKNESS, cell_uv.x);
-        float line_y = step(LINE_THICKNESS, cell_uv.y);
-        float grid = 1.0 - (line_x * line_y);
-        
-        vec3 final_color = mix(background_color, GRID_COLOR, grid);
-        fragColor = vec4(final_color, 1.0);
-    }
-
-    // --- Main entry point for the shader ---
-    void main() {
-        mainImage(gl_FragColor, vUv * u_resolution);
-    }
-`;
-
-const educationMaterial = new THREE.ShaderMaterial({
-    vertexShader: passthroughVertexShader,
-    fragmentShader: personalFragmentShader,
-    uniforms: {
-        u_time: { value: 0.0 },
-        u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-    }
-});
-
 const backgroundGeometry = new THREE.PlaneGeometry(2, 2);
 const backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial);
 bgScene.add(backgroundMesh);
@@ -352,7 +269,7 @@ const imageUrls = [
   agentsImg,
   universityImg,
   // Keep the full URLs as strings
-  "https://placehold.co/800x800/967E76/333?text=Personal Projects",
+  ideaImg,
   visionImg,
   "https://placehold.co/800x800/C2B2B2/333?text=X+Synthesizer",
   "https://placehold.co/800x800/B2C8DF/333?text=Drip+VST",
@@ -364,10 +281,9 @@ const imageUrls = [
   "https://placehold.co/800x800/E2703A/333?text=Border+Protection+Portal",
 ];
 
-function createCubeWithMultipleFaces() {
+function createCubeWithMultipleFaces(images) {
   const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5); // A basic cube geometry
 
-  const images = [dripImg, goldImg, sandboxImg, spazImg, xImg, goatImg];
   const materials = [];
 
   images.forEach(imagePath => {
@@ -426,12 +342,21 @@ projects.forEach((section, index) => {
     cube = new THREE.Mesh(geometry, material);
     cube.position.x = 3.5; // Center the cube
   } 
+  else if (index == 5 ) {
+    const images = [orthoImg, orthoImg, motionImg, motionImg, orthoImg, orthoImg];
+    cube = createCubeWithMultipleFaces(images);
+  }
+  else if (index == 6 ) {
+    const images = [lynkUpImg, lynkUpImg, soloImg, soloImg, lynkUpImg, lynkUpImg];
+    cube = createCubeWithMultipleFaces(images);
+  }
   else if (index == 7 ) {
-    cube = createCubeWithMultipleFaces();
-  } else if (index == 10 ) {
-    const boxGeometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-    cube = new THREE.Mesh(boxGeometry, educationMaterial);
-    cube.position.x = 3.5; // Center the cube
+    const images = [dripImg, goldImg, twaImg, twaImg, xImg, sandboxImg];
+    cube = createCubeWithMultipleFaces(images);
+  } 
+  else if (index == 8 ) {
+    const images = [agentsImg, agentsImg, volitionImg, volitionImg, agentsImg, agentsImg];
+    cube = createCubeWithMultipleFaces(images);
   } else {
     // --- ORIGINAL LOGIC FOR ALL OTHER CUBES ---
     const imageUrl = imageUrls[index] || imageUrls[imageUrls.length - 1];
@@ -557,7 +482,6 @@ function animate() {
   const deltaTime = clock.getDelta();
   // Update the background shader's time uniform
   backgroundMaterial.uniforms.u_time.value += deltaTime;
-  educationMaterial.uniforms.u_time.value += deltaTime;
   // --- Shooting Star Logic ---
   // Periodically try to spawn a single shooting star
   if (Math.random() < SHOOTINg_STAR_CHANCE) { // Adjust this value for frequency
@@ -610,7 +534,6 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  educationMaterial.uniforms.u_resolution.value.copy(newResolution);
   backgroundMaterial.uniforms.u_resolution.value.set(
     window.innerWidth,
     window.innerHeight,
