@@ -327,6 +327,102 @@ projects.forEach((section, index) => {
   cubes.push(cube);
 });
 
+// --- Shooting Stars and Meteor Showers ---
+const shootingStars = [];
+const SHOOTINg_STAR_CHANCE = 0.005; // Chance per frame for a shower
+const SHOOTING_STAR_COUNT = 5; // Max simultaneous shooting stars
+const METEOR_SHOWER_CHANCE = 0.000005; // Chance per frame for a shower
+const METEOR_SHOWER_COUNT = 10; // Number of meteors in a shower
+
+class ShootingStar {
+  constructor() {
+    const points = [];
+    // Start slightly above the top of the screen
+    this.x = (Math.random() - 0.5) * 25; // Random X within view
+    this.y = (Math.random() * 5) + 8; // Start high up, above the camera's view
+    this.z = (Math.random() * -10) - 5; // Random Z depth behind cubes
+    this.speed = Math.random() * 0.2 + 0.1; // Speed of the star
+    this.length = Math.random() * 1.5 + 0.5; // Length of the tail
+
+    // Direction (down-left bias)
+    this.directionX = -0.5 - Math.random() * 0.5;
+    this.directionY = -0.5 - Math.random() * 0.5;
+    this.directionZ = Math.random() * 0.5 - 0.25; // Some Z movement
+
+    const material = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      linewidth: 1,
+      transparent: true,
+      blending: THREE.AdditiveBlending, // Makes them glow
+    });
+
+    points.push(new THREE.Vector3(this.x, this.y, this.z));
+    points.push(new THREE.Vector3(this.x + this.directionX * this.length, this.y + this.directionY * this.length, this.z + this.directionZ * this.length));
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    this.mesh = new THREE.Line(geometry, material);
+    scene.add(this.mesh);
+
+    this.life = 1.0; // From 1.0 (full opacity) to 0.0 (faded)
+    this.initialY = this.y;
+    this.speedMultiplier = 1.0; // For meteor showers
+  }
+
+  update(deltaTime) {
+    // Move the star
+    this.x += this.directionX * this.speed * this.speedMultiplier;
+    this.y += this.directionY * this.speed * this.speedMultiplier;
+    this.z += this.directionZ * this.speed * this.speedMultiplier;
+
+    // Update geometry positions for the moving tail
+    const positions = this.mesh.geometry.attributes.position.array;
+    positions[0] = this.x;
+    positions[1] = this.y;
+    positions[2] = this.z;
+    positions[3] = this.x + this.directionX * this.length;
+    positions[4] = this.y + this.directionY * this.length;
+    positions[5] = this.z + this.directionZ * this.length;
+    this.mesh.geometry.attributes.position.needsUpdate = true;
+
+    // Fade out
+    this.life -= deltaTime * (0.5 + Math.random() * 0.5); // Faster fade
+    this.mesh.material.opacity = Math.max(0, this.life);
+
+    // Remove if off screen or faded
+    if (this.life <= 0 || this.y < -8) { // If it goes below the screen or fades
+      scene.remove(this.mesh);
+      return false; // Indicate it should be removed from the array
+    }
+    return true; // Keep in the array
+  }
+}
+
+function spawnShootingStar() {
+  if (shootingStars.length < SHOOTING_STAR_COUNT) {
+    shootingStars.push(new ShootingStar());
+  }
+}
+
+function spawnMeteorShower() {
+    for (let i = 0; i < METEOR_SHOWER_COUNT; i++) {
+        const star = new ShootingStar();
+        // Give meteors in a shower a similar, more pronounced direction
+        star.directionX = -1.0 - Math.random() * 0.5;
+        star.directionY = -1.0 - Math.random() * 0.5;
+        star.directionZ = Math.random() * 0.5 - 0.25;
+        star.speedMultiplier = 1.5 + Math.random() * 1.0; // Faster
+        star.length = Math.random() * 2.0 + 1.0; // Longer tails
+        // Stagger their starting positions slightly for a "shower" effect
+        star.x = (Math.random() - 0.5) * 30 + (Math.random() * 10);
+        star.y = (Math.random() * 10) + 10;
+        star.z = (Math.random() * -15) - 5;
+        star.life = 0.5 + Math.random() * 0.5; // Shorter initial life, more varied fade
+        star.mesh.material.color.setRGB(Math.random() * 0.5 + 0.5, Math.random() * 0.5 + 0.5, 1.0); // Slightly bluish tint for meteors
+        shootingStars.push(star);
+    }
+}
+
+
 const clock = new THREE.Clock();
 
 // Animation Loop
@@ -338,6 +434,25 @@ function animate() {
 
   // Update the background shader's time uniform
   backgroundMaterial.uniforms.u_time.value += deltaTime;
+
+  // --- Shooting Star Logic ---
+  // Periodically try to spawn a single shooting star
+  if (Math.random() < SHOOTINg_STAR_CHANCE) { // Adjust this value for frequency
+    spawnShootingStar();
+  }
+
+  // Random chance for a meteor shower
+  if (Math.random() < METEOR_SHOWER_CHANCE) {
+    spawnMeteorShower();
+  }
+
+
+  // Update and clean up shooting stars
+  for (let i = shootingStars.length - 1; i >= 0; i--) {
+    if (!shootingStars[i].update(deltaTime)) {
+      shootingStars.splice(i, 1);
+    }
+  }
 
   // --- FIX 2: Use 'cubes' and 'projects' instead of 'objects' and 'sections' ---
   // Animate objects based on scroll position
@@ -361,7 +476,7 @@ function animate() {
   // --- Multi-pass Render ---
   renderer.clear();
   renderer.render(bgScene, bgCamera);
-  renderer.clearDepth();
+  renderer.clearDepth(); // This is crucial for rendering shooting stars AND cubes on top of the background.
   renderer.render(scene, camera);
 }
 
