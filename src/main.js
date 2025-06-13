@@ -329,7 +329,7 @@ projects.forEach((section, index) => {
 
 // --- Shooting Stars and Meteor Showers ---
 const shootingStars = [];
-const SHOOTINg_STAR_CHANCE = 0.005; // Chance per frame for a shower
+const SHOOTINg_STAR_CHANCE = 0.0005; // Chance per frame for a shower
 const SHOOTING_STAR_COUNT = 5; // Max simultaneous shooting stars
 const METEOR_SHOWER_CHANCE = 0.000005; // Chance per frame for a shower
 const METEOR_SHOWER_COUNT = 10; // Number of meteors in a shower
