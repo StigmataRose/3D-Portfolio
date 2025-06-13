@@ -1,429 +1,1595 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Skyler Crank - Portfolio</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        /* Base styles */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #000000;
-            color: #e5e7eb; /* text-gray-200 */
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5),
-                         0 0 10px rgba(0, 0, 0, 0.5),
-                         0 0 15px rgba(0, 0, 0, 0.5);
-            /* overflow-x: hidden on the body is good, but adding it to main is more robust. */
-            overflow-x: hidden; 
-        }
+      /* Base styles */
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          "Open Sans",
+          "Helvetica Neue",
+          sans-serif;
+        background-color: #000000;
+        color: #e5e7eb; /* text-gray-200 */
+        text-shadow:
+          0 0 5px rgba(0, 0, 0, 0.5),
+          0 0 10px rgba(0, 0, 0, 0.5),
+          0 0 15px rgba(0, 0, 0, 0.5);
+        /* overflow-x: hidden on the body is good, but adding it to main is more robust. */
+        overflow-x: hidden;
+      }
 
-        /* Starfield background canvas */
-        canvas#bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        main {
-            position: relative;
-            z-index: 1;
-            /* FIX #1: This is the most effective way to prevent horizontal scrolling
+      /* Starfield background canvas */
+      canvas#bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      button {
+        position: relative; /* Essential for z-index to work */
+        z-index: 1000; /* Super high to be above everything else */
+      }
+      main {
+        position: relative;
+        z-index: 1;
+        /* FIX #1: This is the most effective way to prevent horizontal scrolling
                caused by animating elements within the main content area. */
-            overflow-x: hidden;
-        }
+        overflow-x: hidden;
+      }
 
-        /* Base styles for all top-level sections */
-        main > section {
-             padding: 5rem 1rem;
-             min-height: 100vh;
-             display: flex;
-             flex-direction: column;
-             justify-content: center;
-        }
+      /* Base styles for all top-level sections */
+      main > section {
+        padding: 5rem 1rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
 
-        /* Spacing between project sections to reveal background */
-        .project-section {
-            margin-bottom: 25vh; 
-        }
+      /* Spacing between project sections to reveal background */
+      .project-section {
+        margin-bottom: 25vh;
+      }
 
-        /* Remove margin from the last project to avoid extra space at the bottom */
-        main > section.project-section:last-of-type {
-            margin-bottom: 0;
-        }
+      /* Remove margin from the last project to avoid extra space at the bottom */
+      main > section.project-section:last-of-type {
+        margin-bottom: 0;
+      }
 
-        /* Shared card style with transition for transform and opacity */
-        .card {
-             background-color: rgba(1, 3, 9, 0.8); /* bg-gray-900 with opacity */
-             
-             /* PERFORMANCE NOTE: backdrop-filter is VERY resource-intensive and can cause
+      /* Shared card style with transition for transform and opacity */
+      .card {
+        background-color: rgba(1, 3, 9, 0.8); /* bg-gray-900 with opacity */
+
+        /* PERFORMANCE NOTE: backdrop-filter is VERY resource-intensive and can cause
                 scrolling "jank" or jerkiness, especially on mobile. If you experience
                 performance issues, comment out the two lines below. */
-             backdrop-filter: blur(10px);
-             -webkit-backdrop-filter: blur(10px);
-             
-             border: 1px solid #374151; /* border-gray-700 */
-             border-radius: 0.75rem; /* rounded-xl */
-             padding: 1.5rem;
-             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-             transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.8s ease-in-out;
-             
-             /* FIX #2: Add 'will-change' to hint to the browser that these properties
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+
+        border: 1px solid #374151; /* border-gray-700 */
+        border-radius: 0.75rem; /* rounded-xl */
+        padding: 1.5rem;
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+          opacity 0.8s ease-in-out;
+
+        /* FIX #2: Add 'will-change' to hint to the browser that these properties
                 will be animated, allowing it to optimize for smoother performance. */
-             will-change: transform, opacity;
-        }
+        will-change: transform, opacity;
+      }
 
-        /* NEW: Blue Glow Card Style */
-        .blue-glow-card {
-            background-color: rgba(1, 3, 9, 0.8); /* Same as card background */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            
-            /* Blue border and glow */
-            border: 1px solid #0EA5E9; /* Tailwind's blue-500, or a similar blue */
-            box-shadow: 
-                0 0 15px rgba(14, 165, 233, 0.3), /* Inner blue glow */
-                0 0 30px rgba(14, 165, 233, 0.2), /* Larger blue glow */
-                0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Standard shadow */
-            
-            /* Maintain similar transitions if you plan to animate it, though not directly requested for this specific "Thank you" card */
-            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.8s ease-in-out;
-            will-change: transform, opacity;
-        }
-        
-        /* Transition for project header elements */
-        .project-header > * {
-            transition: opacity 0.8s ease-in-out;
-        }
+      /* NEW: Blue Glow Card Style */
+      .blue-glow-card {
+        background-color: rgba(1, 3, 9, 0.8); /* Same as card background */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
 
-        /* Keyword pills/tags */
-        .skill-tag {
-            display: inline-block;
-            background-color: #374151; /* bg-gray-700 */
-            color: #d1d5db; /* text-gray-300 */
-            padding: 0.35rem 0.85rem;
-            margin: 0.25rem;
-            border-radius: 9999px; /* rounded-full */
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500; /* medium */
-            transition: all 0.2s ease-in-out;
-            border: 1px solid #4b5563; /* border-gray-600 */
-        }
-        .skill-tag:hover {
-            background-color: #06b6d4; /* bg-cyan-500 */
-            color: #ffffff;
-            border-color: #06b6d4; /* border-cyan-500 */
-        }
+        /* Blue border and glow */
+        border: 1px solid #0ea5e9; /* Tailwind's blue-500, or a similar blue */
+        box-shadow:
+          0 0 15px rgba(14, 165, 233, 0.3),
+          /* Inner blue glow */ 0 0 30px rgba(14, 165, 233, 0.2),
+          /* Larger blue glow */ 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Standard shadow */
 
-        /* Animation */
-        .content-fade-in {
-            animation: fadeIn 1s ease-in-out;
+        /* Maintain similar transitions if you plan to animate it, though not directly requested for this specific "Thank you" card */
+        transition:
+          transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+          opacity 0.8s ease-in-out;
+        will-change: transform, opacity;
+      }
+
+      /* Transition for project header elements */
+      .project-header > * {
+        transition: opacity 0.8s ease-in-out;
+      }
+
+      /* Keyword pills/tags */
+      .skill-tag {
+        display: inline-block;
+        background-color: #374151; /* bg-gray-700 */
+        color: #d1d5db; /* text-gray-300 */
+        padding: 0.35rem 0.85rem;
+        margin: 0.25rem;
+        border-radius: 9999px; /* rounded-full */
+        font-size: 0.875rem; /* text-sm */
+        font-weight: 500; /* medium */
+        transition: all 0.2s ease-in-out;
+        border: 1px solid #4b5563; /* border-gray-600 */
+      }
+      .skill-tag:hover {
+        background-color: #06b6d4; /* bg-cyan-500 */
+        color: #ffffff;
+        border-color: #06b6d4; /* border-cyan-500 */
+      }
+
+      /* Animation */
+      .content-fade-in {
+        animation: fadeIn 1s ease-in-out;
+      }
+      main > section:first-of-type {
+        position: relative; /* This is the key to fix the positioning context */
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        main > section:first-of-type {
-            position: relative; /* This is the key to fix the positioning context */
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+      }
+      /* Scroll Down Arrow Animation */
+      .scroll-prompt-arrow {
+        animation: gentle-bounce 2s ease-in-out infinite;
+      }
+      @keyframes gentle-bounce {
+        0%,
+        100% {
+          transform: translateY(0);
         }
-        /* Scroll Down Arrow Animation */
-        .scroll-prompt-arrow {
-            animation: gentle-bounce 2s ease-in-out infinite;
+        50% {
+          transform: translateY(-10px);
         }
-        @keyframes gentle-bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
+      }
     </style>
-</head>
-<body class="bg-black text-gray-200">
-
+  </head>
+  <body class="bg-black text-gray-200">
     <canvas id="bg"></canvas>
 
     <main>
-
-        <section class="text-center">
-            <div class="flex flex-col justify-center flex-1">
-                <div class="content-fade-in">
-                    <h1 class="text-6xl md:text-8xl font-extrabold tracking-tighter text-white">Skyler Crank</h1>
-                    <p class="mt-4 text-2xl text-cyan-400">Software Engineer</p>
-                    <p class="mt-6 text-xl text-gray-400">skyler@typewriteraudio.com</p>
-                </div>
-            </div>
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
-                <svg class="w-8 h-8 text-gray-400 mx-auto scroll-prompt-arrow" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-                <p class="mt-2 text-sm text-gray-400 tracking-widest uppercase">Scroll Down</p>
-            </div>
-        </section>
-
-        <section>
-            <div class="max-w-4xl mx-auto content-fade-in">
-                <h2 class="text-5xl font-bold text-center text-white mb-12">Education & Certifications</h2>
-                <div class="text-center mb-12">
-                     <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="card">
-                        <h3 class="text-2xl font-semibold text-cyan-400">Formal Education</h3>
-                        <ul class="mt-4 space-y-2 text-lg">
-                            <li><strong class="text-white">Bachelors, Arts & Science (Digital Audio):</strong> 2016</li>
-                            <li><strong class="text-white">Associates in Arts:</strong> 2012</li>
-                            <li><strong class="text-white">High School Diploma:</strong> 2009</li>
-                        </ul>
-                    </div>
-                    <div class="card">
-                        <h3 class="text-2xl font-semibold text-cyan-400">Professional Certifications</h3>
-                        <ul class="mt-4 space-y-2 text-lg">
-                            <li><strong class="text-white">CISSP:</strong> Certified Information Systems Security Professional (member of ISC2)</li>
-                            <li><strong class="text-white">CCSK:</strong> Certificate of Cloud Security Knowledge (by CSA)</li>
-                            <li><strong class="text-white">SURE Grant Researcher</strong> (Binaural Audio Research)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="text-center">
-            <div class="content-fade-in max-w-3xl mx-auto">
-                <h2 class="text-5xl font-bold text-white">Professional Projects</h2>
-                <p class="mt-4 text-xl text-gray-400">A showcase of my software development journey.</p>
-                <p class="mt-6 text-base text-gray-500">Powered by:</p>
-                <div class="mt-2 flex justify-center items-center space-x-6">
-                    <div class="flex flex-col items-center">
-                        <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js Logo" class="h-8 w-auto">
-                        <span class="mt-1 text-xs text-gray-500">Node.js</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://vitejs.dev/logo.svg" alt="Vite Logo" class="h-10 w-10">
-                        <span class="mt-1 text-xs text-gray-500">Vite</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="Tailwind CSS Logo" class="h-8 w-auto">
-                        <span class="mt-1 text-xs text-gray-500">Tailwind CSS</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section class="project-section content-fade-in">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">Caterpillar Inc,</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Enterprise Network Application & Automation</h2>
-                    <p class="mt-4 text-xl text-gray-400">Cyber Security Analyst</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">Enterprises with sensitive SCADA and factory networks require a robust, automated system to manage firewall rules, eliminating manual errors and enhancing security posture against sophisticated threats.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">Architected and built a full-stack web portal using Python and Flask to automate the lifecycle of enterprise network firewall rules. The system includes a CI/CD pipeline for rapid, secure deployments and uses Celery with Cron for scheduling automated network configuration updates, ensuring that security policies are consistently enforced across all protected devices.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Responsible for the complete Software Development Lifecycle (SDLC) from concept to deployment.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Engineered a secure CI/CD pipeline to automate testing and deployment, reducing manual intervention by 100%.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Developed a scalable backend with Flask and Alchemy to manage complex firewall rule sets in a MySQL database.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Secured critical factory and SCADA devices by automating network protections, drastically reducing the attack surface.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">Python</span><span class="skill-tag">Flask</span><span class="skill-tag">SQLAlchemy</span><span class="skill-tag">Celery</span><span class="skill-tag">Cron</span><span class="skill-tag">MySQL</span><span class="skill-tag">CI/CD</span><span class="skill-tag">Network Security</span><span class="skill-tag">Docker</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-section content-fade-in">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">Neck Illusions</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">A.I. Manufacturing System</h2>
-                    <p class="mt-4 text-xl text-gray-400">Lead Developer & Architect</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">A local business needed to establish a strong online presence, streamline its inventory management, and significantly increase daily revenue through effective digital marketing.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">Designed and launched a new e-commerce website using Webflow for rapid development and easy content management. Integrated the site with the company's inventory system. Created and managed highly targeted Google Ads campaigns to drive local traffic and sales.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Single-handedly scaled business revenue from $1,500 to over $6,000 per day.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Designed a modern, user-friendly website that improved customer engagement and conversion rates.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Successfully integrated a live inventory system, reducing manual data entry and preventing stock discrepancies.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Managed a profitable Google Ads strategy that delivered a high return on ad spend (ROAS).</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">Webflow</span><span class="skill-tag">E-commerce</span><span class="skill-tag">Google Ads</span><span class="skill-tag">Digital Marketing</span><span class="skill-tag">Inventory Management</span><span class="skill-tag">UI/UX Design</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-section content-fade-in">
-            <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">Motion View, LLC</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Orthodontic 3D Software</h2>
-                    <p class="mt-4 text-xl text-gray-400">Software Contractor &amp; AI Consultant</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                     <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">A critical 32-bit legacy application for dental modeling, used by 70% of orthodontists, faced obsolescence. It needed a clear migration path to 64-bit and required integration with modern AI for point cloud segmentation to improve accuracy and workflow efficiency.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">As a contractor, I scoped the complex migration from a 32-bit Borland C++ application to a modern 64-bit architecture. I collaborated with AI experts to define integration points for PyTorch-based point cloud segmentation models, leveraging the VTK library for advanced 3D visualization.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Delivered a comprehensive technical roadmap for the 32-bit to 64-bit application migration.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Bridged the gap between legacy C++ developers and modern AI researchers to create a cohesive project plan.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Defined the architecture for integrating PyTorch models into the existing C++/VTK application.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Influenced the technical direction of a mission-critical tool used across the majority of the orthodontics industry.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">Borland C++</span><span class="skill-tag">VTK</span><span class="skill-tag">PyTorch</span><span class="skill-tag">Point Cloud Segmentation</span><span class="skill-tag">Legacy Code Modernization</span><span class="skill-tag">AI Integration</span><span class="skill-tag">3D Graphics</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-        
-        <section class="project-section content-fade-in">
-             <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">The Audio Programmer, LLC</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Hardware Interface Application</h2>
-                    <p class="mt-4 text-xl text-gray-400">Software Contractor &amp; UX Designer</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">The client had a complete UI/UX design in Figma for a MIDI VST plugin but needed a skilled developer to translate the visual concept into a fully functional, cross-platform audio plugin.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">Leveraging my expertise in C++ and JUCE, I was contracted to build the plugin from the ground up. I meticulously implemented the Figma designs using OpenGL for the UI, ensuring a pixel-perfect and responsive user experience. I also engineered the core MIDI processing logic to meet the product's specifications.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Successfully brought a high-fidelity Figma design to life as a functional JUCE plugin.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Engineered the C++ and MIDI backend to create a stable and performant audio tool.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Utilized OpenGL within the JUCE framework to deliver a smooth, hardware-accelerated user interface.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Delivered the project on time and to specification, enabling the client to launch their product.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">C++</span><span class="skill-tag">JUCE</span><span class="skill-tag">OpenGL</span><span class="skill-tag">Figma</span><span class="skill-tag">MIDI</span><span class="skill-tag">UI/UX Implementation</span><span class="skill-tag">VST</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-section content-fade-in">
-             <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">Type Writer Audio, LLC</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Digital Audio Signal Processing Application Suite</h2>
-                    <p class="mt-4 text-xl text-gray-400">Founder & Lead Developer</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">A rapidly scaling tech company was facing uncontrolled AWS costs due to untagged, orphaned, and oversized resources provisioned by a large development team, leading to significant budget overruns.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">I developed an automated cost-monitoring and remediation system using Python and the Boto3 SDK. The solution scans the cloud environment for policy violations, automatically terminates non-compliant EC2 instances, and sends detailed daily reports to a Slack channel, providing immediate visibility into cost-saving actions.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Reduced monthly AWS spend by 25% within the first quarter of deployment.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Automated the enforcement of resource tagging policies, improving cost allocation and accountability.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Built a serverless notification system with AWS Lambda and Slack API for real-time alerts.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Created a culture of cost-consciousness by providing developers with direct feedback on resource management.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">AWS</span><span class="skill-tag">Python</span><span class="skill-tag">Boto3</span><span class="skill-tag">EC2</span><span class="skill-tag">Lambda</span><span class="skill-tag">Cloud Security</span><span class="skill-tag">FinOps</span><span class="skill-tag">Slack API</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-section content-fade-in">
-             <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">Deep Silver Volition</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">AAA Video Game</h2>
-                    <p class="mt-4 text-xl text-gray-400">Audio Programmer Intern</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">As a personal venture, I aimed to create a suite of high-quality, professional-grade audio effects plugins (VST/AU) that were both computationally efficient and intuitively designed for modern music producers.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">I founded Typewriter Audio and single-handedly managed the entire product lifecycle. This involved designing and implementing complex DSP algorithms in C++, developing a custom UI framework with OpenGL for hardware-accelerated graphics, and building a secure licensing and distribution system from scratch.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Developed and shipped three commercial audio plugins used by artists worldwide.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Wrote advanced DSP for effects like reverb, delay, and saturation, focusing on audio quality and low-latency performance.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Architected a custom C++ UI library, resulting in responsive and visually appealing interfaces.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Managed all aspects of the business, including marketing, sales, and customer support.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">C++</span><span class="skill-tag">DSP</span><span class="skill-tag">JUCE</span><span class="skill-tag">OpenGL</span><span class="skill-tag">Audio Engineering</span><span class="skill-tag">VST / AU</span><span class="skill-tag">Entrepreneurship</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-
-        <section class="project-section content-fade-in">
-             <div class="max-w-7xl mx-auto w-full">
-                <div class="project-header text-center mb-12">
-                    <p class="text-lg font-medium text-cyan-400">University of St. Francis</p>
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Mobile Application</h2>
-                    <p class="mt-4 text-xl text-gray-400">Developer</p>
-                    <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-                    <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">As a personal venture, I aimed to create a suite of high-quality, professional-grade audio effects plugins (VST/AU) that were both computationally efficient and intuitively designed for modern music producers.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">I founded Typewriter Audio and single-handedly managed the entire product lifecycle. This involved designing and implementing complex DSP algorithms in C++, developing a custom UI framework with OpenGL for hardware-accelerated graphics, and building a secure licensing and distribution system from scratch.</p></div></div>
-                    <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Developed and shipped three commercial audio plugins used by artists worldwide.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Wrote advanced DSP for effects like reverb, delay, and saturation, focusing on audio quality and low-latency performance.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Architected a custom C++ UI library, resulting in responsive and visually appealing interfaces.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Managed all aspects of the business, including marketing, sales, and customer support.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">C++</span><span class="skill-tag">DSP</span><span class="skill-tag">JUCE</span><span class="skill-tag">OpenGL</span><span class="skill-tag">Audio Engineering</span><span class="skill-tag">VST / AU</span><span class="skill-tag">Entrepreneurship</span></div></div></aside>
-                </div>
-            </div>
-        </section>
-        
-        <section class="text-center">
-            <div class="content-fade-in max-w-3xl mx-auto">
-               <h2 class="text-5xl font-bold text-white">Personal Projects</h2>
-               <p class="mt-4 text-xl text-gray-400">A collection of my work in software development, audio technology, cloud infrastructure, and security from concept to launch.</p>
-           </div>
-       </section>
-       <section class="project-section content-fade-in">
-        <div class="max-w-7xl mx-auto w-full">
-           <div class="project-header text-center mb-12">
-               <p class="text-lg font-medium text-cyan-400">Rust Desktop Application</p>
-               <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2">Vision</h2>
-               <p class="mt-4 text-xl text-gray-400">A project I created to learn Rust.</p>
-               <button class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200">Show Details</button>
-           </div>
-           <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
-               <div class="lg:col-span-3 space-y-6"><div class="card"><h3 class="text-2xl font-semibold text-white">The Challenge</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">As a personal venture, I aimed to create a suite of high-quality, professional-grade audio effects plugins (VST/AU) that were both computationally efficient and intuitively designed for modern music producers.</p></div><div class="card"><h3 class="text-2xl font-semibold text-white">The Solution</h3><p class="mt-3 text-lg leading-relaxed text-gray-300">I founded Typewriter Audio and single-handedly managed the entire product lifecycle. This involved designing and implementing complex DSP algorithms in C++, developing a custom UI framework with OpenGL for hardware-accelerated graphics, and building a secure licensing and distribution system from scratch.</p></div></div>
-               <aside class="lg:col-span-2 space-y-6"><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">My Impact &amp; Contributions</h3><ul class="space-y-3 text-gray-300"><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Developed and shipped three commercial audio plugins used by artists worldwide.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Wrote advanced DSP for effects like reverb, delay, and saturation, focusing on audio quality and low-latency performance.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Architected a custom C++ UI library, resulting in responsive and visually appealing interfaces.</span></li><li class="flex items-start"><svg class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>Managed all aspects of the business, including marketing, sales, and customer support.</span></li></ul></div><div class="card"><h3 class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4">Technology &amp; Skills</h3><div class="flex flex-wrap"><span class="skill-tag">C++</span><span class="skill-tag">DSP</span><span class="skill-tag">JUCE</span><span class="skill-tag">OpenGL</span><span class="skill-tag">Audio Engineering</span><span class="skill-tag">VST / AU</span><span class="skill-tag">Entrepreneurship</span></div></div></aside>
-           </div>
-       </div>
-   </section>
-
-   <section class="text-center py-16">
-        <div class="max-w-3xl mx-auto content-fade-in blue-glow-card"> <p class="text-xl md:text-2xl font-semibold text-white">Thank you for exploring my portfolio!</p>
-            <p class="mt-4 text-lg text-gray-400">What's our next adventure?</p>
+      <section class="text-center">
+        <div class="flex flex-col justify-center flex-1">
+          <div class="content-fade-in">
+            <h1
+              class="text-6xl md:text-8xl font-extrabold tracking-tighter text-white"
+            >
+              Skyler Crank
+            </h1>
+            <p class="mt-4 text-2xl text-cyan-400">Software Engineer</p>
+            <p class="mt-6 text-xl text-gray-400">skyler@typewriteraudio.com</p>
+          </div>
         </div>
-    </section>
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center">
+          <svg
+            class="w-8 h-8 text-gray-400 mx-auto scroll-prompt-arrow"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+          <p class="mt-2 text-sm text-gray-400 tracking-widest uppercase">
+            Scroll Down
+          </p>
+        </div>
+      </section>
 
+      <section>
+        <div class="max-w-4xl mx-auto content-fade-in">
+          <h2 class="text-5xl font-bold text-center text-white mb-12">
+            Education & Certifications
+          </h2>
+          <div class="text-center mb-12">
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card">
+              <h3 class="text-2xl font-semibold text-cyan-400">
+                Formal Education
+              </h3>
+              <ul class="mt-4 space-y-2 text-lg">
+                <li>
+                  <strong class="text-white"
+                    >Bachelors, Arts & Science (Digital Audio):</strong
+                  >
+                  2016
+                </li>
+                <li>
+                  <strong class="text-white">Associates in Arts:</strong> 2012
+                </li>
+                <li>
+                  <strong class="text-white">High School Diploma:</strong> 2009
+                </li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3 class="text-2xl font-semibold text-cyan-400">
+                Professional Certifications
+              </h3>
+              <ul class="mt-4 space-y-2 text-lg">
+                <li>
+                  <strong class="text-white">CISSP:</strong> Certified
+                  Information Systems Security Professional (member of ISC2)
+                </li>
+                <li>
+                  <strong class="text-white">CCSK:</strong> Certificate of Cloud
+                  Security Knowledge (by CSA)
+                </li>
+                <li>
+                  <strong class="text-white">SURE Grant Researcher</strong>
+                  (Binaural Audio Research)
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="text-center">
+        <div class="content-fade-in max-w-3xl mx-auto">
+          <h2 class="text-5xl font-bold text-white">Professional Projects</h2>
+          <p class="mt-4 text-xl text-gray-400">
+            A showcase of my software development journey.
+          </p>
+          <p class="mt-6 text-base text-gray-500">Powered by:</p>
+          <div class="mt-2 flex justify-center items-center space-x-6">
+            <div class="flex flex-col items-center">
+              <img
+                src="https://nodejs.org/static/images/logo.svg"
+                alt="Node.js Logo"
+                class="h-8 w-auto"
+              />
+              <span class="mt-1 text-xs text-gray-500">Node.js</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <img
+                src="https://vitejs.dev/logo.svg"
+                alt="Vite Logo"
+                class="h-10 w-10"
+              />
+              <span class="mt-1 text-xs text-gray-500">Vite</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <img
+                src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg"
+                alt="Tailwind CSS Logo"
+                class="h-8 w-auto"
+              />
+              <span class="mt-1 text-xs text-gray-500">Tailwind CSS</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">Caterpillar Inc,</p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Enterprise Network Security Automation Platform
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">Cyber Security Analyst</p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  Secure the perimeter of Caterpillar's expansive software
+                  architecture, managing multi-repository environments and
+                  ensuring robust security for factory operations through policy
+                  automation, security scanning, and stakeholder oversight.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  Designed and implemented a full-stack web portal to centralize
+                  firewall policy enforcement, enabling enterprise architects
+                  and stakeholders to manage project-specific cybersecurity with
+                  integrated network border protection and security scans.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    <span
+                      >Managed the complete **SDLC** using **Agile**
+                      methodologies (**Scrum/Kanban**), from concept to
+                      deployment.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    <span
+                      >Engineered a secure **CI/CD pipeline** with automated
+                      **unit tests** and deployment, eliminating manual
+                      intervention.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    <span
+                      >Developed a scalable **Flask** (**Python**) backend with
+                      **SQLAlchemy** to manage complex **firewall** rule sets in
+                      a **MySQL** database.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                      <span
+                      >Automated network protections for critical factory and
+                      **SCADA** devices, significantly reducing attack
+                      surface.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">Python</span
+                  ><span class="skill-tag">Flask</span
+                  ><span class="skill-tag">SQLAlchemy</span
+                  ><span class="skill-tag">MySQL</span
+                  ><span class="skill-tag">CI/CD</span
+                  ><span class="skill-tag">Unit Testing</span
+                  ><span class="skill-tag">Agile (Scrum/Kanban)</span
+                  ><span class="skill-tag">GitHub</span
+                  ><span class="skill-tag">Docker</span
+                  ><span class="skill-tag">Linux</span
+                  ><span class="skill-tag">Firewall Management</span
+                  ><span class="skill-tag">Network Security</span
+                  ><span class="skill-tag">SDLC</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">Neck Illusions</p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              A.I. Manufacturing System
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">Lead Developer & Architect</p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  A local business needed to establish a strong online presence,
+                  streamline its inventory management, and significantly
+                  increase daily revenue through effective digital marketing.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  Designed and launched a new e-commerce website using Webflow
+                  for rapid development and easy content management. Integrated
+                  the site with the company's inventory system. Created and
+                  managed highly targeted Google Ads campaigns to drive local
+                  traffic and sales.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                      <span
+                      >Single-handedly scaled business revenue from $1,500 to
+                      over $6,000 per day.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                    <span
+                      >Designed a modern, user-friendly website that improved
+                      customer engagement and conversion rates.
+                    </span>
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                      <span
+                      >Successfully integrated a live inventory system, reducing
+                      manual data entry and preventing stock
+                      discrepancies.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                      <span
+                      >Managed a profitable Google Ads strategy that delivered a
+                      high return on ad spend (ROAS).</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">Webflow</span
+                  ><span class="skill-tag">E-commerce</span
+                  ><span class="skill-tag">Google Ads</span
+                  ><span class="skill-tag">Digital Marketing</span
+                  ><span class="skill-tag">Inventory Management</span
+                  ><span class="skill-tag">UI/UX Design</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">Motion View, LLC</p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Orthodontic 3D Software
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">
+              Software Contractor &amp; AI Consultant
+            </p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  A critical 32-bit legacy application for dental modeling, used
+                  by 70% of orthodontists, faced obsolescence. It needed a clear
+                  migration path to 64-bit and required integration with modern
+                  AI for point cloud segmentation to improve accuracy and
+                  workflow efficiency.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  As a contractor, I scoped the complex migration from a 32-bit
+                  Borland C++ application to a modern 64-bit architecture. I
+                  collaborated with AI experts to define integration points for
+                  PyTorch-based point cloud segmentation models, leveraging the
+                  VTK library for advanced 3D visualization.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path></svg>
+                      <span
+                      >Delivered a comprehensive technical roadmap for the
+                      32-bit to 64-bit application migration.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Bridged the gap between legacy C++ developers and modern
+                      AI researchers to create a cohesive project plan.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Defined the architecture for integrating PyTorch models
+                      into the existing C++/VTK application.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Influenced the technical direction of a mission-critical
+                      tool used across the majority of the orthodontics
+                      industry.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">Borland C++</span
+                  ><span class="skill-tag">VTK</span
+                  ><span class="skill-tag">PyTorch</span
+                  ><span class="skill-tag">Point Cloud Segmentation</span
+                  ><span class="skill-tag">Legacy Code Modernization</span
+                  ><span class="skill-tag">AI Integration</span
+                  ><span class="skill-tag">3D Graphics</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">
+              The Audio Programmer, LLC
+            </p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Hardware Interface Application
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">
+              Software Contractor &amp; UX Designer
+            </p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  The client had a complete UI/UX design in Figma for a MIDI VST
+                  plugin but needed a skilled developer to translate the visual
+                  concept into a fully functional, cross-platform audio plugin.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  Leveraging my expertise in C++ and JUCE, I was contracted to
+                  build the plugin from the ground up. I meticulously
+                  implemented the Figma designs using OpenGL for the UI,
+                  ensuring a pixel-perfect and responsive user experience. I
+                  also engineered the core MIDI processing logic to meet the
+                  product's specifications.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Successfully brought a high-fidelity Figma design to life
+                      as a functional JUCE plugin.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Engineered the C++ and MIDI backend to create a stable
+                      and performant audio tool.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Utilized OpenGL within the JUCE framework to deliver a
+                      smooth, hardware-accelerated user interface.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Delivered the project on time and to specification,
+                      enabling the client to launch their product.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">C++</span
+                  ><span class="skill-tag">JUCE</span
+                  ><span class="skill-tag">OpenGL</span
+                  ><span class="skill-tag">Figma</span
+                  ><span class="skill-tag">MIDI</span
+                  ><span class="skill-tag">UI/UX Implementation</span
+                  ><span class="skill-tag">VST</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">
+              Type Writer Audio, LLC
+            </p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Digital Audio Signal Processing Application Suite
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">Founder & Lead Developer</p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  A rapidly scaling tech company was facing uncontrolled AWS
+                  costs due to untagged, orphaned, and oversized resources
+                  provisioned by a large development team, leading to
+                  significant budget overruns.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  I developed an automated cost-monitoring and remediation
+                  system using Python and the Boto3 SDK. The solution scans the
+                  cloud environment for policy violations, automatically
+                  terminates non-compliant EC2 instances, and sends detailed
+                  daily reports to a Slack channel, providing immediate
+                  visibility into cost-saving actions.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Reduced monthly AWS spend by 25% within the first quarter
+                      of deployment.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Automated the enforcement of resource tagging policies,
+                      improving cost allocation and accountability.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Built a serverless notification system with AWS Lambda
+                      and Slack API for real-time alerts.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Created a culture of cost-consciousness by providing
+                      developers with direct feedback on resource
+                      management.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">AWS</span
+                  ><span class="skill-tag">Python</span
+                  ><span class="skill-tag">Boto3</span
+                  ><span class="skill-tag">EC2</span
+                  ><span class="skill-tag">Lambda</span
+                  ><span class="skill-tag">Cloud Security</span
+                  ><span class="skill-tag">FinOps</span
+                  ><span class="skill-tag">Slack API</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">
+              Deep Silver Volition
+            </p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              AAA Video Game
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">Audio Programmer Intern</p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  As a personal venture, I aimed to create a suite of
+                  high-quality, professional-grade audio effects plugins
+                  (VST/AU) that were both computationally efficient and
+                  intuitively designed for modern music producers.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  I founded Typewriter Audio and single-handedly managed the
+                  entire product lifecycle. This involved designing and
+                  implementing complex DSP algorithms in C++, developing a
+                  custom UI framework with OpenGL for hardware-accelerated
+                  graphics, and building a secure licensing and distribution
+                  system from scratch.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Developed and shipped three commercial audio plugins used
+                      by artists worldwide.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Wrote advanced DSP for effects like reverb, delay, and
+                      saturation, focusing on audio quality and low-latency
+                      performance.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Architected a custom C++ UI library, resulting in
+                      responsive and visually appealing interfaces.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Managed all aspects of the business, including marketing,
+                      sales, and customer support.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">C++</span
+                  ><span class="skill-tag">DSP</span
+                  ><span class="skill-tag">JUCE</span
+                  ><span class="skill-tag">OpenGL</span
+                  ><span class="skill-tag">Audio Engineering</span
+                  ><span class="skill-tag">VST / AU</span
+                  ><span class="skill-tag">Entrepreneurship</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">
+              University of St. Francis
+            </p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Mobile Application
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">Developer</p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  As a personal venture, I aimed to create a suite of
+                  high-quality, professional-grade audio effects plugins
+                  (VST/AU) that were both computationally efficient and
+                  intuitively designed for modern music producers.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  I founded Typewriter Audio and single-handedly managed the
+                  entire product lifecycle. This involved designing and
+                  implementing complex DSP algorithms in C++, developing a
+                  custom UI framework with OpenGL for hardware-accelerated
+                  graphics, and building a secure licensing and distribution
+                  system from scratch.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Developed and shipped three commercial audio plugins used
+                      by artists worldwide.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Wrote advanced DSP for effects like reverb, delay, and
+                      saturation, focusing on audio quality and low-latency
+                      performance.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Architected a custom C++ UI library, resulting in
+                      responsive and visually appealing interfaces.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Managed all aspects of the business, including marketing,
+                      sales, and customer support.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">C++</span
+                  ><span class="skill-tag">DSP</span
+                  ><span class="skill-tag">JUCE</span
+                  ><span class="skill-tag">OpenGL</span
+                  ><span class="skill-tag">Audio Engineering</span
+                  ><span class="skill-tag">VST / AU</span
+                  ><span class="skill-tag">Entrepreneurship</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="text-center">
+        <div class="content-fade-in max-w-3xl mx-auto">
+          <h2 class="text-5xl font-bold text-white">Personal Projects</h2>
+          <p class="mt-4 text-xl text-gray-400">
+            A collection of my work in software development, audio technology,
+            cloud infrastructure, and security from concept to launch.
+          </p>
+        </div>
+      </section>
+      <section class="project-section content-fade-in">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="project-header text-center mb-12">
+            <p class="text-lg font-medium text-cyan-400">
+              Rust Desktop Application
+            </p>
+            <h2
+              class="text-4xl font-bold tracking-tight text-white sm:text-5xl mt-2"
+            >
+              Vision
+            </h2>
+            <p class="mt-4 text-xl text-gray-400">
+              A project I created to learn Rust.
+            </p>
+            <button
+              class="toggle-section-btn mt-8 px-6 py-2 bg-cyan-500 text-white font-medium rounded-full hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-opacity-75 transition-all duration-200"
+            >
+              Show Details
+            </button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+            <div class="lg:col-span-3 space-y-6">
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Challenge</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  As a personal venture, I aimed to create a suite of
+                  high-quality, professional-grade audio effects plugins
+                  (VST/AU) that were both computationally efficient and
+                  intuitively designed for modern music producers.
+                </p>
+              </div>
+              <div class="card">
+                <h3 class="text-2xl font-semibold text-white">The Solution</h3>
+                <p class="mt-3 text-lg leading-relaxed text-gray-300">
+                  I founded Typewriter Audio and single-handedly managed the
+                  entire product lifecycle. This involved designing and
+                  implementing complex DSP algorithms in C++, developing a
+                  custom UI framework with OpenGL for hardware-accelerated
+                  graphics, and building a secure licensing and distribution
+                  system from scratch.
+                </p>
+              </div>
+            </div>
+            <aside class="lg:col-span-2 space-y-6">
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  My Impact &amp; Contributions
+                </h3>
+                <ul class="space-y-3 text-gray-300">
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Developed and shipped three commercial audio plugins used
+                      by artists worldwide.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Wrote advanced DSP for effects like reverb, delay, and
+                      saturation, focusing on audio quality and low-latency
+                      performance.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Architected a custom C++ UI library, resulting in
+                      responsive and visually appealing interfaces.</span
+                    >
+                  </li>
+                  <li class="flex items-start">
+                    <svg
+                      class="w-6 h-6 text-cyan-400 mr-3 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg>
+                        <span
+                      >Managed all aspects of the business, including marketing,
+                      sales, and customer support.</span
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3
+                  class="text-xl font-semibold text-white border-b border-gray-700 pb-3 mb-4"
+                >
+                  Technology &amp; Skills
+                </h3>
+                <div class="flex flex-wrap">
+                  <span class="skill-tag">C++</span
+                  ><span class="skill-tag">DSP</span
+                  ><span class="skill-tag">JUCE</span
+                  ><span class="skill-tag">OpenGL</span
+                  ><span class="skill-tag">Audio Engineering</span
+                  ><span class="skill-tag">VST / AU</span
+                  ><span class="skill-tag">Entrepreneurship</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="text-center py-16">
+        <div class="max-w-3xl mx-auto content-fade-in blue-glow-card">
+          <p class="text-xl md:text-2xl font-semibold text-white">
+            Thank you for exploring my portfolio!
+          </p>
+          <p class="mt-4 text-lg text-gray-400">What's our next adventure?</p>
+        </div>
+      </section>
     </main>
-    
+
     <script type="module" src="./src/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleButtons = document.querySelectorAll('.toggle-section-btn');
-        
-            toggleButtons.forEach(button => {
-                const section = button.closest('section');
-                if (!section) return;
-        
-                const cards = section.querySelectorAll('.card');
-                // No longer need to select header elements for hiding/showing
-                // The project-header content (titles, descriptions) will remain visible by default.
-        
-                // --- 1. INITIAL STATE SETUP: HIDE CARDS ON LOAD ---
-        
-                // Hide cards instantly without an animation
-                cards.forEach(card => {
-                    card.style.transition = 'none'; // Temporarily disable transitions
-                    card.style.opacity = '0';
-                    // Place cards in their "scattered" hidden position so the "show" animation is correct
-                    const x = (Math.random() - 0.5) * 2 * (window.innerWidth / 3);
-                    const y = (Math.random() - 0.5) * 2 * (window.innerHeight / 4);
-                    const rotation = (Math.random() - 0.5) * 60;
-                    card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
-                });
-        
-                // Set the initial state and button text
-                button.textContent = 'Show Details';
-                section.dataset.visible = 'false'; // Keep this data attribute to track visibility
-        
-                // Re-enable transitions after a very short delay.
-                setTimeout(() => {
-                    cards.forEach(card => card.style.transition = ''); // Resets to use the transition from your CSS file
-                }, 50);
-        
-        
-                // --- 2. CLICK EVENT LISTENER TO TOGGLE VISIBILITY ---
-                button.addEventListener('click', () => {
-                    const isVisible = section.dataset.visible === 'true';
-        
-                    if (isVisible) {
-                        // --- ANIMATE OUT (HIDE) CARDS ---
-                        cards.forEach(card => {
-                            const x = (Math.random() - 0.5) * 2 * (window.innerWidth / 2);
-                            const y = (Math.random() - 0.5) * 2 * (window.innerHeight / 3);
-                            const rotation = (Math.random() - 0.5) * 90;
-                            card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
-                            card.style.opacity = '0';
-                        });
-        
-                        button.textContent = 'Show Details';
-                        section.dataset.visible = 'false';
-        
-                    } else {
-                        // --- ANIMATE IN (SHOW) CARDS ---
-                        cards.forEach(card => {
-                            card.style.transform = 'translate(0, 0) rotate(0deg) scale(1)';
-                            card.style.opacity = '1';
-                        });
-        
-                        button.textContent = 'Hide Details';
-                        section.dataset.visible = 'true';
-                    }
-                });
-            });
+      document.addEventListener("DOMContentLoaded", () => {
+        const toggleButtons = document.querySelectorAll(".toggle-section-btn");
+
+        toggleButtons.forEach((button) => {
+          const section = button.closest("section");
+          if (!section) return;
+
+          const cards = section.querySelectorAll(".card");
+          // No longer need to select header elements for hiding/showing
+          // The project-header content (titles, descriptions) will remain visible by default.
+
+          // --- 1. INITIAL STATE SETUP: HIDE CARDS ON LOAD ---
+
+          // Hide cards instantly without an animation
+          cards.forEach((card) => {
+            card.style.transition = "none"; // Temporarily disable transitions
+            card.style.opacity = "0";
+            // Place cards in their "scattered" hidden position so the "show" animation is correct
+            const x = (Math.random() - 0.5) * 2 * (window.innerWidth / 3);
+            const y = (Math.random() - 0.5) * 2 * (window.innerHeight / 4);
+            const rotation = (Math.random() - 0.5) * 60;
+            card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
+          });
+
+          // Set the initial state and button text
+          button.textContent = "Show Details";
+          section.dataset.visible = "false"; // Keep this data attribute to track visibility
+
+          // Re-enable transitions after a very short delay.
+          setTimeout(() => {
+            cards.forEach((card) => (card.style.transition = "")); // Resets to use the transition from your CSS file
+          }, 50);
+
+          // --- 2. CLICK EVENT LISTENER TO TOGGLE VISIBILITY ---
+          button.addEventListener("click", () => {
+            const isVisible = section.dataset.visible === "true";
+
+            if (isVisible) {
+              // --- ANIMATE OUT (HIDE) CARDS ---
+              cards.forEach((card) => {
+                const x = (Math.random() - 0.5) * 2 * (window.innerWidth / 2);
+                const y = (Math.random() - 0.5) * 2 * (window.innerHeight / 3);
+                const rotation = (Math.random() - 0.5) * 90;
+                card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(0.5)`;
+                card.style.opacity = "0";
+              });
+
+              button.textContent = "Show Details";
+              section.dataset.visible = "false";
+            } else {
+              // --- ANIMATE IN (SHOW) CARDS ---
+              cards.forEach((card) => {
+                card.style.transform = "translate(0, 0) rotate(0deg) scale(1)";
+                card.style.opacity = "1";
+              });
+
+              button.textContent = "Hide Details";
+              section.dataset.visible = "true";
+            }
+          });
         });
+      });
     </script>
-</body>
+  </body>
 </html>
