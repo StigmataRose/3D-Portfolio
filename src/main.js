@@ -15,7 +15,7 @@ import goatImg from "./assets/images/goat.png";
 import agentsImg from "./assets/images/agents.png";
 import universityImg from "./assets/images/university.jpeg";
 import visionImg from "./assets/images/vision.png";
-import novaImg from "./assets/images/nova.png";
+import novaImg from "./assets/images/me.png";
 // Main Scene (for the cubes)
 const scene = new THREE.Scene();
 
