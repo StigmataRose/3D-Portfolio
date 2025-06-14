@@ -384,11 +384,28 @@ function animate(): void {
     const windowHeight: number = window.innerHeight;
     const sectionCenter: number = rect.top + rect.height / 2;
     const screenCenter: number = windowHeight / 2;
-    const delta: number = sectionCenter - screenCenter;
-    const targetZ: number = delta * 0.015;
-    const smoothingFactor: number = 2.0;
-    const lerpAmount: number = 1.0 - Math.exp(-smoothingFactor * deltaTime);
-    mesh.position.z += (targetZ - mesh.position.z) * lerpAmount;
+    const delta = (rect.top + rect.height / 2) - window.innerHeight / 2;
+    const immediateTargetZ = delta * 0.015;
+
+    // --- Step 2 (THE FIX): Smooth the target's position over time ---
+    // Initialize a smoothedZ value if it doesn't exist on this cube yet
+    if (mesh.userData.smoothedZ === undefined) {
+        mesh.userData.smoothedZ = immediateTargetZ;
+    }
+    // Define how quickly the "invisible" target glides to the real target
+    const targetSmoothingFactor = 6.0;
+    const targetLerpAmount = 1.0 - Math.exp(-targetSmoothingFactor * deltaTime);
+    // Lerp the smoothedZ towards the immediate target Z
+    mesh.userData.smoothedZ += (immediateTargetZ - mesh.userData.smoothedZ) * targetLerpAmount;
+
+
+    // --- Step 3: Make the visible cube chase the SMOOTHED target ---
+    const smoothingFactor = 4.0; // This can be a bit higher now
+    const lerpAmount = 1.0 - Math.exp(-smoothingFactor * deltaTime);
+    
+    // The cube now chases mesh.userData.smoothedZ instead of immediateTargetZ
+    mesh.position.z += (mesh.userData.smoothedZ - mesh.position.z) * lerpAmount;
+
     mesh.rotation.x += 0.2 * deltaTime;
     mesh.rotation.y += 0.3 * deltaTime;
 
