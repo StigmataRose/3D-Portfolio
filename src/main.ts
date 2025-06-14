@@ -21,7 +21,12 @@ import motionImg from "./assets/images/motion.png";
 import soloImg from "./assets/images/solo.png";
 import twaImg from "./assets/images/twa.png";
 import volitionImg from "./assets/images/volition.png";
-
+import coolerImg from "./assets/images/cooler.png";
+import roboguitarImg from "./assets/images/robo-guitar.png";
+import colerImg from "./assets/images/color.png";
+import fftImg from "./assets/images/fft.png";
+import parametersImg from "./assets/images/parameters.png";
+import hackImg from "./assets/images/hack.png";
 // Main Scene (for the cubes)
 const scene: THREE.Scene = new THREE.Scene();
 
@@ -249,7 +254,7 @@ scene.environmentIntensity = 1.0;
 
 // Image URLs
 const imageUrls: string[] = [
-  meImg, educationImg, projectImg, catImg, guitarImg, orthoImg, lynkUpImg, goatImg, agentsImg, universityImg, ideaImg, visionImg,
+  meImg, educationImg, projectImg, catImg, guitarImg, orthoImg, lynkUpImg, goatImg, agentsImg, universityImg, ideaImg, visionImg, coolerImg, roboguitarImg, parametersImg, colerImg, fftImg, hackImg,
   "https://placehold.co/800x800/C2B2B2/333?text=X+Synthesizer", "https://placehold.co/800x800/B2C8DF/333?text=Drip+VST", "https://placehold.co/800x800/C4D7E0/333?text=Spaz+VST", "https://placehold.co/800x800/E2D5D5/333?text=Sandbox+Synth", "https://placehold.co/800x800/D7C0AE/333?text=Lynk+Up+VST", "https://placehold.co/800x800/968C83/333?text=Ortho+Insight+3D", "https://placehold.co/800x800/A1BE95/333?text=Top+Shelf+Herbs", "https://placehold.co/800x800/E2703A/333?text=Border+Protection+Portal",
 ];
 
