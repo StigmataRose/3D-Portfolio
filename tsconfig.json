@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve", // Keep this if you ever use React/JSX in the future
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true, // Recommended for Vite
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["three", "vite/client"], // Ensure Vite client types are included for asset imports
+    "lib": ["ESNext", "DOM", "DOM.Iterable"] // Ensure DOM types are available
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"], // Adjust if you have TSX files
+  "exclude": ["node_modules"]
+}
