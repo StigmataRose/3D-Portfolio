@@ -22,7 +22,7 @@ import soloImg from "./assets/images/solo.png";
 import twaImg from "./assets/images/twa.png";
 import volitionImg from "./assets/images/volition.png";
 import coolerImg from "./assets/images/cooler.png";
-import roboguitarImg from "./assets/images/robo-guitar.png";
+import roboguitarImg from "./assets/images/robo-guitar2.png";
 import colerImg from "./assets/images/color.png";
 import fftImg from "./assets/images/fft.png";
 import parametersImg from "./assets/images/parameters.png";
