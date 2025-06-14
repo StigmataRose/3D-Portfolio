@@ -386,7 +386,7 @@ function animate(): void {
     const screenCenter: number = windowHeight / 2;
     const delta: number = sectionCenter - screenCenter;
     const targetZ: number = delta * 0.015;
-    const smoothingFactor: number = 4.0;
+    const smoothingFactor: number = 2.0;
     const lerpAmount: number = 1.0 - Math.exp(-smoothingFactor * deltaTime);
     mesh.position.z += (targetZ - mesh.position.z) * lerpAmount;
     mesh.rotation.x += 0.2 * deltaTime;
